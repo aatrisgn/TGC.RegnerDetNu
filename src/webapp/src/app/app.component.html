@@ -1,0 +1,42 @@
+<header>
+  <nav class="navbar navbar-expand-lg ">
+    <a class="navbar-brand" href="/">RegnerDet.nu (?)</a>
+    <button class="navbar-toggler navbar-toggler-right" type="button" (click)="isNavbarCollapsed = !isNavbarCollapsed" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+  </button>
+    
+  <div [ngbCollapse]="isNavbarCollapsed" class="navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ms-auto mb-2 mb-lg-0 ">
+        <li class="nav-item ">
+          <a class="nav-link active" routerLink="/" routerLinkActive="active" ariaCurrentWhenActive="page" (click)="collapseMenu()">Forside</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/making-the-world-a-better-place" routerLinkActive="active" ariaCurrentWhenActive="page" (click)="collapseMenu()">Mission</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/know-the-people" routerLinkActive="active" ariaCurrentWhenActive="page" (click)="collapseMenu()">Om os</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/your-path-in-live" routerLinkActive="active" ariaCurrentWhenActive="page" (click)="collapseMenu()">Karriere</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" routerLink="/reach-out" routerLinkActive="active" ariaCurrentWhenActive="page" (click)="collapseMenu()">Kontakt</a>
+        </li>
+      </ul>
+    </div>
+  </nav>
+</header>
+
+<content>
+  <div class="container-fluid content-wrapper">
+    <router-outlet></router-outlet>
+  </div>  
+</content>
+
+<div class="container-fluid footer-container ">
+  <footer class="d-flex flex-wrap justify-content-between align-items-center py-3">
+    <div class="col-md-12 d-flex align-items-center">
+      <span class="text-muted">© 2022 RegnerDet.Nu - Delivering impactful change through weather reports</span>
+    </div>
+  </footer>
+</div>
