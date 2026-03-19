@@ -9,11 +9,16 @@ import { PageNotFoundComponent } from './page-not-found/page-not-found.component
 
 const routes: Routes = [
   {path:'', component: HomeComponent},
-  {path:'home', component: HomeComponent},
-  {path:'making-the-world-a-better-place', component: MissionComponent},
-  {path:'know-the-people', component: AboutComponent},
-  {path:'your-path-in-live', component: CareersComponent},
-  {path:'reach-out', component: ContactComponent},
+  {path:'mission', component: MissionComponent},
+  {path:'om-os', component: AboutComponent},
+  {path:'karriere', component: CareersComponent},
+  {path:'kontakt', component: ContactComponent},
+  // Redirects for old English routes
+  {path:'making-the-world-a-better-place', redirectTo: 'mission', pathMatch: 'full'},
+  {path:'know-the-people', redirectTo: 'om-os', pathMatch: 'full'},
+  {path:'your-path-in-live', redirectTo: 'karriere', pathMatch: 'full'},
+  {path:'reach-out', redirectTo: 'kontakt', pathMatch: 'full'},
+  {path:'home', redirectTo: '', pathMatch: 'full'},
   { path: '**', component: PageNotFoundComponent },
 ];
 

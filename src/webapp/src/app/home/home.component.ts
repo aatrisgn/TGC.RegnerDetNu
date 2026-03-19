@@ -2,7 +2,7 @@ import { Component, OnInit } from '@angular/core';
 import { WheatherResponseDTO } from '../Models/WeatherResponseDTO';
 import { OpenWeatherApiClient } from '../Services/OpenWeatherApiClient';
 import { OpenWeahterTranslator } from '../Services/OpenWeatherTranslator';
-import { Observable } from 'rxjs';
+import { SeoService } from '../Services/SeoService';
 
 @Component({
   selector: 'app-home',
@@ -26,12 +26,17 @@ export class HomeComponent implements OnInit {
 
   private currentWeather:WheatherResponseDTO = new WheatherResponseDTO();
 
-  constructor(openWeatherApiClient:OpenWeatherApiClient, openWeahterTranslator:OpenWeahterTranslator) {
+  constructor(openWeatherApiClient:OpenWeatherApiClient, openWeahterTranslator:OpenWeahterTranslator, private seo: SeoService) {
     this._openWeatherApiClient = openWeatherApiClient;
     this._openWeahterTranslator = openWeahterTranslator;
   }
 
   ngOnInit(): void {
+    this.seo.setPageMeta(
+      'Regner det nu? Tjek vejret i realtid',
+      'RegnerDet.nu svarer på det vigtigste spørgsmål: Regner det nu? Få real-time vejropdatering baseret på præcis din placering – hurtigt og nemt.',
+      '/'
+    );
     this.getLocation();
   }
 
@@ -80,7 +85,7 @@ export class HomeComponent implements OnInit {
     if(geolocationPositionError.code == geolocationPositionError.PERMISSION_DENIED){
       this.IsItRainingText = "Du skal give adgang til din lokalitet. Ellers kan vi ikke tjekke vejret."
     } else if (geolocationPositionError.code == geolocationPositionError.POSITION_UNAVAILABLE){
-      this.IsItRainingText = "Vi kunne desværre ikke bestemme din position præcist nok til at tjekke om det regner. Beklager."; 
+      this.IsItRainingText = "Vi kunne desværre ikke bestemme din position præcist nok til at tjekke om det regner. Beklager.";
     }
   }
 }

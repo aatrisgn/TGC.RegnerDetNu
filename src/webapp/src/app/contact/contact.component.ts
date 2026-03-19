@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SeoService } from '../Services/SeoService';
 
 @Component({
   selector: 'app-contact',
@@ -8,9 +9,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class ContactComponent implements OnInit {
 
-  constructor() { }
+  constructor(private seo: SeoService) { }
 
   ngOnInit(): void {
+    this.seo.setPageMeta(
+      'Kontakt',
+      'Vil du komme i kontakt med RegnerDet.nu? Vi kontakter dig, når tiden er moden. Hold øje med din indbakke.',
+      '/kontakt'
+    );
   }
 
 }

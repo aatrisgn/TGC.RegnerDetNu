@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SeoService } from '../Services/SeoService';
 
 @Component({
   selector: 'app-mission',
@@ -8,9 +9,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class MissionComponent implements OnInit {
 
-  constructor() { }
+  constructor(private seo: SeoService) { }
 
   ngOnInit(): void {
+    this.seo.setPageMeta(
+      'Vores Mission',
+      'Læs om RegnerDet.nu\'s mission – kampen mod naturen, for klimaet og for et bedre samfund. Vi er dedikerede til at gøre verden til et bedre sted, ét vejr-check ad gangen.',
+      '/mission'
+    );
   }
 
 }

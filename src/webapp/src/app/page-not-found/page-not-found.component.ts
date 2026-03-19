@@ -1,4 +1,5 @@
 import { Component, OnInit } from '@angular/core';
+import { SeoService } from '../Services/SeoService';
 
 @Component({
   selector: 'app-page-not-found',
@@ -8,9 +9,14 @@ import { Component, OnInit } from '@angular/core';
 })
 export class PageNotFoundComponent implements OnInit {
 
-  constructor() { }
+  constructor(private seo: SeoService) { }
 
   ngOnInit(): void {
+    this.seo.setPageMeta(
+      'Side ikke fundet',
+      'Den side du leder efter findes ikke på RegnerDet.nu. Måske er den skyllet væk af regnen.',
+      ''
+    );
   }
 
 }
