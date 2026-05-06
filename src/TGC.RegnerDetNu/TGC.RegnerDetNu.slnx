@@ -1,0 +1,10 @@
+<Solution>
+  <Folder Name="/src/">
+    <Project Path="TGC.RegnerDetNu.Api/TGC.RegnerDetNu.Api.csproj" />
+    <Project Path="TGC.RegnerDetNu.Application/TGC.RegnerDetNu.Application.csproj" />
+    <Project Path="TGC.RegnerDetNu.Domain/TGC.RegnerDetNu.Domain.csproj" />
+  </Folder>
+  <Folder Name="/tests/" />
+  <Project Path="TGC.Api.Communication/TGC.Api.Communication.csproj" />
+  <Project Path="TGC.OpenWeatherApi/TGC.OpenWeatherApi.csproj" />
+</Solution>
