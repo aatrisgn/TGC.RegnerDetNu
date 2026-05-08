@@ -4,6 +4,7 @@ FROM node:latest AS build
 WORKDIR /dist/regnerdetnu
 
 RUN npm cache clean --force
+RUN npm install -g yarn
 
 COPY . .
 RUN yarn install

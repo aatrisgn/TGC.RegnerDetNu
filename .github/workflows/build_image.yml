@@ -21,7 +21,7 @@ permissions:
 
 jobs:
   build_web_app_job:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04-arm
     name: Build Web App and deploy to ACR
     environment: dev
     env:
