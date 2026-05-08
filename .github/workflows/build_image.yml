@@ -20,7 +20,29 @@ permissions:
   contents: read
 
 jobs:
+  tag_commit:
+    runs-on: ubuntu-latest
+    name: Tag commit
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+
+    steps:
+    - uses: actions/checkout@v3
+    - name: Generate version
+      id: version
+      shell: pwsh
+      run: ./.github/scripts/generate_version.ps1
+
+    - name: Tag commit
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      run: |
+        git config user.name "github-actions[bot]"
+        git config user.email "github-actions[bot]@users.noreply.github.com"
+        git tag ${{ steps.version.outputs.version }}
+        git push origin ${{ steps.version.outputs.version }}
+    
   build_web_app_job:
+    needs: [tag_commit]
     runs-on: ubuntu-24.04-arm
     name: Build Web App and deploy to ACR
     environment: dev
@@ -52,12 +74,13 @@ jobs:
       run: |
         docker buildx build . \
           --platform linux/amd64,linux/arm64 \
-          --tag $acr_registry/$image_name:${{ github.sha }} \
+          --tag $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }} \
           --tag $acr_registry/$image_name:latest \
           --push
       working-directory: ${{ env.app_path }}
 
   build_web_api_job:
+    needs: [tag_commit]
     runs-on: ubuntu-latest
     name: Build Web API and deploy to ACR
     environment: dev
@@ -89,7 +112,7 @@ jobs:
       run: |
         docker buildx build . \
           --platform linux/amd64,linux/arm64 \
-          --tag $acr_registry/$image_name:${{ github.sha }} \
+          --tag $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }} \
           --tag $acr_registry/$image_name:latest \
           --push
       working-directory: ${{ env.app_path }}
