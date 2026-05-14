@@ -3,6 +3,9 @@ import { WheatherResponseDTO } from '../Models/WeatherResponseDTO';
 import { OpenWeatherApiClient } from '../Services/OpenWeatherApiClient';
 import { OpenWeahterTranslator } from '../Services/OpenWeatherTranslator';
 import { SeoService } from '../Services/SeoService';
+import { AnonymousAuthenticationProvider } from "@microsoft/kiota-abstractions";
+import { FetchRequestAdapter } from "@microsoft/kiota-http-fetchlibrary";
+import { createApiClient } from '../auto_generated/client/apiClient';
 
 @Component({
   selector: 'app-home',
@@ -38,6 +41,7 @@ export class HomeComponent implements OnInit {
       '/'
     );
     this.getLocation();
+    this.testKiota();
   }
 
   GetCurrentRainingSituation():void{
@@ -61,6 +65,15 @@ export class HomeComponent implements OnInit {
         this.weatherType = "not rain";
       }
     }
+  }
+
+  testKiota(){
+    const authProvider = new AnonymousAuthenticationProvider();
+    const adapter = new FetchRequestAdapter(authProvider);
+    const client = createApiClient(adapter);
+    client.withUrl("http://localhost:5121").api.weather.current.byLongitude("11").byLatitude("55").get().then(response => {
+      console.log(response);
+    });
   }
 
   getLocation() {
