@@ -17,7 +17,7 @@ public class WeatherController : TgcControllerBase
 
 	[HttpGet]
 	[Route("weather/current/{longitude}/{latitude}")]
-	[ProducesResponseType(typeof(CurrentWeatherResponse), StatusCodes.Status200OK)]
+	[ProducesResponseType(typeof(GetCurrentWeatherQueryResponse), StatusCodes.Status200OK)]
 	[ProducesResponseType(StatusCodes.Status404NotFound)]
 	public async Task<IActionResult> GetCurrentWeatherByLongAndLat(string longitude, string latitude)
 	{

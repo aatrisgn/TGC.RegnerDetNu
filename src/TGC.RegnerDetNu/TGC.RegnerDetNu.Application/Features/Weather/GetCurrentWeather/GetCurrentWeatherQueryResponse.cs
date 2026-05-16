@@ -6,4 +6,5 @@ public class GetCurrentWeatherQueryResponse : BaseResponse
 {
 	public bool DoesItRain { get; set; }
 	public string WeatherDescription { get; set; }
+	public string Area { get; set; }
 }

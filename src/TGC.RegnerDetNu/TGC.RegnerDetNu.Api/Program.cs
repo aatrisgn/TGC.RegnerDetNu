@@ -2,19 +2,22 @@ using TGC.RegnerDetNu.Api;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container.
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
+if (builder.Environment.IsDevelopment())
+{
+	builder.Configuration.AddUserSecrets<Program>();
+}
+
 builder.Services.AddOpenApi();
-builder.Services.ConfigureApi();
+builder.Services.ConfigureApi(builder.Configuration);
+builder.Services.AddProblemDetails();
 builder.Services.AddControllers();
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
+app.UseCors("CORS_ORIGINS_POLICY");
+
 if (app.Environment.IsDevelopment())
 {
-	app.MapOpenApi();
-	
 	app.UseSwaggerUI(options =>
 	{
 		options.SwaggerEndpoint("/openapi/v1.json", "v1");
@@ -24,5 +27,7 @@ if (app.Environment.IsDevelopment())
 app.UseHttpsRedirection();
 
 app.MapControllers();
+
+app.MapOpenApi();
 
 app.Run();

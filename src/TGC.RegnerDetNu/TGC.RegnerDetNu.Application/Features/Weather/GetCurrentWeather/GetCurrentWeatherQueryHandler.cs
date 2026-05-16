@@ -34,7 +34,8 @@ public class GetCurrentWeatherQueryHandler : BaseQueryHandler<GetCurrentWeatherQ
 		var response = new GetCurrentWeatherQueryResponse
 		{
 			DoesItRain = weatherDescription.Contains("regn"),
-			WeatherDescription = weatherDescription
+			WeatherDescription = weatherDescription,
+			Area = weatherResponse.Name
 		};
 			
 		return Result<GetCurrentWeatherQueryResponse>.AsOk(response);

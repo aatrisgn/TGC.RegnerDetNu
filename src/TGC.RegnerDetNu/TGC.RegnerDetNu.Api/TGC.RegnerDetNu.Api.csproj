@@ -5,11 +5,14 @@
         <Nullable>enable</Nullable>
         <ImplicitUsings>enable</ImplicitUsings>
       <UserSecretsId>d28bd274-db3b-4b41-af18-2a3517cf77d3</UserSecretsId>
+        <OpenApiFile>TGC.RegnerDetNu.Api.json</OpenApiFile>
+        <buildAngularClient>true</buildAngularClient>
   </PropertyGroup>
 
     <ItemGroup>
         <PackageReference Include="Asp.Versioning.Mvc.ApiExplorer" Version="10.0.0" />
         <PackageReference Include="Microsoft.AspNetCore.OpenApi" Version="10.0.7" />
+        <PackageReference Include="Microsoft.Extensions.ApiDescription.Server" Version="10.0.7" PrivateAssets="all" />
         <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="10.1.7" />
     </ItemGroup>
 
@@ -18,4 +21,16 @@
       <ProjectReference Include="..\TGC.RegnerDetNu.Application\TGC.RegnerDetNu.Application.csproj" />
     </ItemGroup>
 
+    <ItemGroup>
+      <_ContentIncludedByDefault Remove="ts\client\kiota-lock.json" />
+    </ItemGroup>
+
+    <PropertyGroup>
+        <OpenApiGenerateDocuments>true</OpenApiGenerateDocuments>
+        <OpenApiDocumentsDirectory>$(ProjectDir)openapi</OpenApiDocumentsDirectory>
+    </PropertyGroup>
+
+    <Target Name="Kiota" Condition="'$(buildAngularClient)' == 'true'" AfterTargets="Build">
+        <Exec Command="kiota generate --openapi $(ProjectDir)openapi/$(OpenApiFile) --language typescript --output ./../../webapp/src/app/auto_generated/client --exclude-backward-compatible"  />
+    </Target>
 </Project>
