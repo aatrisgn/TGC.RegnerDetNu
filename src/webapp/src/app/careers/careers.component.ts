@@ -5,7 +5,7 @@ import { SeoService } from '../Services/SeoService';
   selector: 'app-careers',
   templateUrl: './careers.component.html',
   styleUrls: ['./careers.component.css'],
-  standalone: false
+  standalone: true
 })
 export class CareersComponent implements OnInit {
 

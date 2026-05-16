@@ -5,7 +5,7 @@ import { SeoService } from '../Services/SeoService';
   selector: 'app-mission',
   templateUrl: './mission.component.html',
   styleUrls: ['./mission.component.css'],
-  standalone: false
+  standalone: true
 })
 export class MissionComponent implements OnInit {
 

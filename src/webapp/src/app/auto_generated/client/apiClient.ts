@@ -35,20 +35,20 @@ export function createApiClient(requestAdapter: RequestAdapter) {
     const serializationWriterFactory = requestAdapter.getSerializationWriterFactory() as SerializationWriterFactoryRegistry;
     const parseNodeFactoryRegistry = requestAdapter.getParseNodeFactory() as ParseNodeFactoryRegistry;
     const backingStoreFactory = requestAdapter.getBackingStoreFactory();
-    
+
     if (parseNodeFactoryRegistry.registerDefaultDeserializer) {
         parseNodeFactoryRegistry.registerDefaultDeserializer(JsonParseNodeFactory, backingStoreFactory);
         parseNodeFactoryRegistry.registerDefaultDeserializer(TextParseNodeFactory, backingStoreFactory);
         parseNodeFactoryRegistry.registerDefaultDeserializer(FormParseNodeFactory, backingStoreFactory);
     }
-    
+
     if (serializationWriterFactory.registerDefaultSerializer) {
         serializationWriterFactory.registerDefaultSerializer(JsonSerializationWriterFactory);
         serializationWriterFactory.registerDefaultSerializer(TextSerializationWriterFactory);
         serializationWriterFactory.registerDefaultSerializer(FormSerializationWriterFactory);
         serializationWriterFactory.registerDefaultSerializer(MultipartSerializationWriterFactory);
     }
-    
+
     const pathParameters: Record<string, unknown> = {
         "baseurl": requestAdapter.baseUrl,
     };

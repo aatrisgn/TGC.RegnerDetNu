@@ -5,7 +5,7 @@ import { SeoService } from '../Services/SeoService';
   selector: 'app-page-not-found',
   templateUrl: './page-not-found.component.html',
   styleUrls: ['./page-not-found.component.css'],
-  standalone: false
+  standalone: true
 })
 export class PageNotFoundComponent implements OnInit {
 

@@ -30,6 +30,7 @@ export function createProblemDetailsFromDiscriminatorValue(parseNode: ParseNode 
 // @ts-ignore
 export function deserializeIntoGetCurrentWeatherQueryResponse(getCurrentWeatherQueryResponse: Partial<GetCurrentWeatherQueryResponse> | undefined = {}) : Record<string, (node: ParseNode) => void> {
     return {
+        "area": n => { getCurrentWeatherQueryResponse.area = n.getStringValue(); },
         "doesItRain": n => { getCurrentWeatherQueryResponse.doesItRain = n.getBooleanValue(); },
         "weatherDescription": n => { getCurrentWeatherQueryResponse.weatherDescription = n.getStringValue(); },
     }
@@ -50,6 +51,10 @@ export function deserializeIntoProblemDetails(problemDetails: Partial<ProblemDet
     }
 }
 export interface GetCurrentWeatherQueryResponse extends AdditionalDataHolder, Parsable {
+    /**
+     * The area property
+     */
+    area?: string | null;
     /**
      * The doesItRain property
      */
@@ -90,6 +95,7 @@ export interface ProblemDetails extends AdditionalDataHolder, ApiError, Parsable
 // @ts-ignore
 export function serializeGetCurrentWeatherQueryResponse(writer: SerializationWriter, getCurrentWeatherQueryResponse: Partial<GetCurrentWeatherQueryResponse> | undefined | null = {}, isSerializingDerivedType: boolean = false) : void {
     if (!getCurrentWeatherQueryResponse || isSerializingDerivedType) { return; }
+    writer.writeStringValue("area", getCurrentWeatherQueryResponse.area);
     writer.writeBooleanValue("doesItRain", getCurrentWeatherQueryResponse.doesItRain);
     writer.writeStringValue("weatherDescription", getCurrentWeatherQueryResponse.weatherDescription);
     writer.writeAdditionalData(getCurrentWeatherQueryResponse.additionalData);

@@ -5,7 +5,7 @@ import { SeoService } from '../Services/SeoService';
   selector: 'app-contact',
   templateUrl: './contact.component.html',
   styleUrls: ['./contact.component.css'],
-  standalone: false
+  standalone: true
 })
 export class ContactComponent implements OnInit {
 

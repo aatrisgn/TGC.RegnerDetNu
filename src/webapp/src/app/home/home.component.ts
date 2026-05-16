@@ -1,38 +1,33 @@
-import { Component, OnInit } from '@angular/core';
-import { WheatherResponseDTO } from '../Models/WeatherResponseDTO';
-import { OpenWeatherApiClient } from '../Services/OpenWeatherApiClient';
-import { OpenWeahterTranslator } from '../Services/OpenWeatherTranslator';
+import { Component, OnInit, NgZone, inject, signal } from '@angular/core';
 import { SeoService } from '../Services/SeoService';
 import { AnonymousAuthenticationProvider } from "@microsoft/kiota-abstractions";
 import { FetchRequestAdapter } from "@microsoft/kiota-http-fetchlibrary";
 import { createApiClient } from '../auto_generated/client/apiClient';
+import { ConfigurationLoaderService } from '../Services/ConfigurationLoader.service';
+import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
+import { BrowserModule } from '@angular/platform-browser';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
-  providers:[OpenWeatherApiClient, OpenWeahterTranslator],
-  standalone: false
+  imports: [NgbModule, CommonModule],
+  standalone: true
 })
 export class HomeComponent implements OnInit {
+  private readonly seo = inject(SeoService);
+  private readonly ngZone = inject(NgZone);
+  private readonly configurationLoaderService = inject(ConfigurationLoaderService);
 
-  private _openWeatherApiClient:OpenWeatherApiClient;
-  private _openWeahterTranslator:OpenWeahterTranslator;
+  protected readonly isItRainingText = signal('');
+  protected readonly weatherType = signal('');
+  protected readonly estimatedArea = signal('');
+  protected readonly showEstimatedArea = signal(false);
 
-  public IsItRainingText:string = "";
-  public weatherType:string = "";
-  public estimatedArea:string = "";
-  public showEstimatedArea:boolean = false;
-  public lat:number = 0;
-  public lng:number = 0;
-  public geoLocationAvailable:boolean = false;
-
-  private currentWeather:WheatherResponseDTO = new WheatherResponseDTO();
-
-  constructor(openWeatherApiClient:OpenWeatherApiClient, openWeahterTranslator:OpenWeahterTranslator, private seo: SeoService) {
-    this._openWeatherApiClient = openWeatherApiClient;
-    this._openWeahterTranslator = openWeahterTranslator;
-  }
+  private readonly lat = signal(0);
+  private readonly lng = signal(0);
+  private readonly geoLocationAvailable = signal(false);
 
   ngOnInit(): void {
     this.seo.setPageMeta(
@@ -41,64 +36,64 @@ export class HomeComponent implements OnInit {
       '/'
     );
     this.getLocation();
-    this.testKiota();
   }
 
-  GetCurrentRainingSituation():void{
-    if(this.geoLocationAvailable == false){
-      this.estimatedArea = "Ingen anelse.";
-      this.showEstimatedArea = true;
+  protected getCurrentRainingSituation(): void {
+    if (!this.geoLocationAvailable()) {
+      this.estimatedArea.set('Ingen anelse.');
+      this.showEstimatedArea.set(true);
     } else {
-      this.getLocation();
-      this.estimatedArea = this.currentWeather.name;
-      this.showEstimatedArea = true;
-
-      let currentWeatherProperty = this.currentWeather.weather[0];
-
-      let translatedDescription = this._openWeahterTranslator.TranslateWeatherDescription(currentWeatherProperty.id);
-
-      if(currentWeatherProperty.description.includes("rain")){
-        this.IsItRainingText = "Jep, kammerat. Internettet siger "+translatedDescription;
-        this.weatherType = "rain";
-      } else {
-        this.IsItRainingText = "Nope! Du kan bare gå ud. Umiddelbart er det "+translatedDescription+"...";
-        this.weatherType = "not rain";
-      }
+      this.fetchCurrentWeather(this.lat(), this.lng());
     }
   }
 
-  testKiota(){
+  private fetchCurrentWeather(latitude: number, longitude: number): void {
+    //This initialization part should probably be fixed
     const authProvider = new AnonymousAuthenticationProvider();
     const adapter = new FetchRequestAdapter(authProvider);
+    adapter.baseUrl = this.configurationLoaderService.apiBaseUrl;
     const client = createApiClient(adapter);
-    client.withUrl("http://localhost:5121").api.weather.current.byLongitude("11").byLatitude("55").get().then(response => {
-      console.log(response);
-    });
-  }
 
-  getLocation() {
-    if (navigator.geolocation) {
-      navigator.geolocation.getCurrentPosition((position) => {
-        if (position) {
-          this.lat = position.coords.latitude;
-          this.lng = position.coords.longitude;
-          this._openWeatherApiClient.GetWeatherByCoordinates(this.lat, this.lng).subscribe(response => {
-            this.currentWeather = response;
-            this.geoLocationAvailable = true;
-          });
+    client.api.weather.current
+      .byLongitude(longitude.toString())
+      .byLatitude(latitude.toString())
+      .get()
+      .then(response => {
+        this.estimatedArea.set(response?.area ?? 'Ingen anelse.');
+        this.showEstimatedArea.set(true);
+
+        if (response?.doesItRain) {
+          this.isItRainingText.set(`Jep, kammerat. Internettet siger ${response.weatherDescription}`);
+          this.weatherType.set('rain');
+        } else {
+          this.isItRainingText.set(`Nope! Du kan bare gå ud. Umiddelbart er det ${response?.weatherDescription}...`);
+          this.weatherType.set('not rain');
         }
-      }, (geolocationPositionError) => this.callbackForMissingPermissions(geolocationPositionError) );
-    } else {
-      alert("Geolocation is not supported by this browser.");
-    }
+      });
   }
 
-  callbackForMissingPermissions(geolocationPositionError: GeolocationPositionError ) : void {
-    this.weatherType = "rain";
-    if(geolocationPositionError.code == geolocationPositionError.PERMISSION_DENIED){
-      this.IsItRainingText = "Du skal give adgang til din lokalitet. Ellers kan vi ikke tjekke vejret."
-    } else if (geolocationPositionError.code == geolocationPositionError.POSITION_UNAVAILABLE){
-      this.IsItRainingText = "Vi kunne desværre ikke bestemme din position præcist nok til at tjekke om det regner. Beklager.";
+  private getLocation(): void {
+    if (!navigator.geolocation) {
+      alert('Geolocation is not supported by this browser.');
+      return;
+    }
+
+    navigator.geolocation.getCurrentPosition(
+      (position) => this.ngZone.run(() => {
+        this.lat.set(position.coords.latitude);
+        this.lng.set(position.coords.longitude);
+        this.geoLocationAvailable.set(true);
+      }),
+      (error) => this.ngZone.run(() => this.handleGeolocationError(error))
+    );
+  }
+
+  private handleGeolocationError(error: GeolocationPositionError): void {
+    this.weatherType.set('rain');
+    if (error.code === error.PERMISSION_DENIED) {
+      this.isItRainingText.set('Du skal give adgang til din lokalitet. Ellers kan vi ikke tjekke vejret.');
+    } else if (error.code === error.POSITION_UNAVAILABLE) {
+      this.isItRainingText.set('Vi kunne desværre ikke bestemme din position præcist nok til at tjekke om det regner. Beklager.');
     }
   }
 }
