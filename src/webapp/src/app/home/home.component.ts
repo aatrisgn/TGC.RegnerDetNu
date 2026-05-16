@@ -1,24 +1,19 @@
 import { Component, OnInit, NgZone, inject, signal } from '@angular/core';
 import { SeoService } from '../Services/SeoService';
-import { AnonymousAuthenticationProvider } from "@microsoft/kiota-abstractions";
-import { FetchRequestAdapter } from "@microsoft/kiota-http-fetchlibrary";
-import { createApiClient } from '../auto_generated/client/apiClient';
-import { ConfigurationLoaderService } from '../Services/ConfigurationLoader.service';
-import { NgbModule } from '@ng-bootstrap/ng-bootstrap';
-import { BrowserModule } from '@angular/platform-browser';
+import { WeatherApiService } from '../Services/WeatherApi.service';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-home',
   templateUrl: './home.component.html',
   styleUrls: ['./home.component.css'],
-  imports: [NgbModule, CommonModule],
+  imports: [CommonModule],
   standalone: true
 })
 export class HomeComponent implements OnInit {
   private readonly seo = inject(SeoService);
   private readonly ngZone = inject(NgZone);
-  private readonly configurationLoaderService = inject(ConfigurationLoaderService);
+  private readonly weatherApi = inject(WeatherApiService);
 
   protected readonly isItRainingText = signal('');
   protected readonly weatherType = signal('');
@@ -48,28 +43,18 @@ export class HomeComponent implements OnInit {
   }
 
   private fetchCurrentWeather(latitude: number, longitude: number): void {
-    //This initialization part should probably be fixed
-    const authProvider = new AnonymousAuthenticationProvider();
-    const adapter = new FetchRequestAdapter(authProvider);
-    adapter.baseUrl = this.configurationLoaderService.apiBaseUrl;
-    const client = createApiClient(adapter);
+    this.weatherApi.getCurrentWeather(latitude, longitude).then(response => {
+      this.estimatedArea.set(response?.area ?? 'Ingen anelse.');
+      this.showEstimatedArea.set(true);
 
-    client.api.weather.current
-      .byLongitude(longitude.toString())
-      .byLatitude(latitude.toString())
-      .get()
-      .then(response => {
-        this.estimatedArea.set(response?.area ?? 'Ingen anelse.');
-        this.showEstimatedArea.set(true);
-
-        if (response?.doesItRain) {
-          this.isItRainingText.set(`Jep, kammerat. Internettet siger ${response.weatherDescription}`);
-          this.weatherType.set('rain');
-        } else {
-          this.isItRainingText.set(`Nope! Du kan bare gå ud. Umiddelbart er det ${response?.weatherDescription}...`);
-          this.weatherType.set('not rain');
-        }
-      });
+      if (response?.doesItRain) {
+        this.isItRainingText.set(`Jep, kammerat. Internettet siger ${response.weatherDescription}`);
+        this.weatherType.set('rain');
+      } else {
+        this.isItRainingText.set(`Nope! Du kan bare gå ud. Umiddelbart er det ${response?.weatherDescription}...`);
+        this.weatherType.set('not rain');
+      }
+    });
   }
 
   private getLocation(): void {

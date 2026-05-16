@@ -1,29 +1,21 @@
-import { HttpBackend, HttpClient } from "@angular/common/http";
-import { Injectable } from "@angular/core";
-import { map } from "rxjs";
+import { HttpBackend, HttpClient } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { map } from 'rxjs';
 
-@Injectable({
-  providedIn: 'root',
-})
-
+@Injectable({ providedIn: 'root' })
 export class ConfigurationLoaderService {
+  private readonly http = new HttpClient(inject(HttpBackend));
   private configs: Configs | undefined;
-
-  private http: HttpClient;
-
-  constructor(private readonly httpHandler: HttpBackend) {
-    this.http = new HttpClient(httpHandler);
-  }
 
   init(): Promise<boolean> {
     return new Promise<boolean>((resolve, reject) => {
       this.http.get<Configs>('/assets/config/runtime.config.json').pipe(map(res => res))
-        .subscribe(value => {
-          this.configs = value;
-          resolve(true);
-        },
-        (error) => {
-          reject(error);
+        .subscribe({
+          next: value => {
+            this.configs = value;
+            resolve(true);
+          },
+          error: err => reject(err),
         });
     });
   }
@@ -37,7 +29,7 @@ export class ConfigurationLoaderService {
   }
 }
 
-export interface Configs{
+export interface Configs {
   EnvironmentType: string;
   ApiBaseURL: string;
   ClientId: string;

@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { SeoService } from '../Services/SeoService';
 
 @Component({
@@ -8,8 +8,7 @@ import { SeoService } from '../Services/SeoService';
   standalone: true
 })
 export class AboutComponent implements OnInit {
-
-  constructor(private seo: SeoService) { }
+  private readonly seo = inject(SeoService);
 
   ngOnInit(): void {
     this.seo.setPageMeta(
@@ -18,5 +17,4 @@ export class AboutComponent implements OnInit {
       '/om-os'
     );
   }
-
 }

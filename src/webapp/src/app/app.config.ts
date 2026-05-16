@@ -1,25 +1,19 @@
-import { ApplicationConfig, importProvidersFrom, inject, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
-import { BrowserModule } from '@angular/platform-browser';
+import { ApplicationConfig, inject, provideAppInitializer, provideZoneChangeDetection } from '@angular/core';
+import { provideRouter } from '@angular/router';
 import { provideHttpClient, withFetch, withInterceptorsFromDi } from '@angular/common/http';
-import { AppRoutingModule } from './app-routing.module';
-import { MatToolbarModule } from '@angular/material/toolbar';
-import { MatIconModule} from '@angular/material/icon';
+import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { routes } from './app.routes';
 import { ConfigurationLoaderService } from './Services/ConfigurationLoader.service';
 
 export const appConfig: ApplicationConfig = {
   providers: [
-    ConfigurationLoaderService,
+    provideZoneChangeDetection({ eventCoalescing: true }),
+    provideRouter(routes),
+    provideHttpClient(withInterceptorsFromDi(), withFetch()),
+    provideAnimationsAsync(),
     provideAppInitializer(() => {
-      var configurationService = inject(ConfigurationLoaderService);
+      const configurationService = inject(ConfigurationLoaderService);
       return configurationService.init();
     }),
-    provideZoneChangeDetection({ eventCoalescing: true }),
-    importProvidersFrom(
-      BrowserModule,
-      AppRoutingModule,
-      MatToolbarModule,
-      MatIconModule,
-    ),
-    provideHttpClient(withInterceptorsFromDi(), withFetch())
   ],
 };
