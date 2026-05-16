@@ -1,0 +1,19 @@
+services:
+  api:
+    image: tgclzdevacr.azurecr.io/tgc-regnerdetnu-api:1.0.3
+    ports:
+      - "8989:8080"
+    environment:
+      - OPEN_WEATHER_API_KEY=${OPEN_WEATHER_API_KEY}
+      - CorsAllowedOrigins=http://localhost:4400
+      - ASPNETCORE_ENVIRONMENT=dev
+
+  webapp:
+    image: tgclzdevacr.azurecr.io/tgc-regnerdetnu-app:1.0.3
+    ports:
+      - "4400:80"
+    environment:
+      - API_URL=http://localhost:8989
+      - ENVIRONMENT_TYPE=dev
+    depends_on:
+      - api
