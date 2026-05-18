@@ -113,7 +113,7 @@ jobs:
 
   build_web_api_arm_job:
     needs: [tag_commit]
-    runs-on: ubuntu-24.04-arm64
+    runs-on: ubuntu-24.04-arm
     name: Build Web API and deploy to ACR
     environment: dev
     env:
