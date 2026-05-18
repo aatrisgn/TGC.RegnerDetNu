@@ -27,7 +27,7 @@ jobs:
       version: ${{ steps.version.outputs.version }}
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
       with:
         fetch-depth: 0
     - name: Generate version
@@ -35,7 +35,7 @@ jobs:
       shell: pwsh
       run: ./.github/scripts/generate_version.ps1
     
-  build_web_app_job:
+  build_web_app_arm_job:
     needs: [tag_commit]
     runs-on: ubuntu-24.04-arm
     name: Build Web App and deploy to ACR
@@ -46,7 +46,7 @@ jobs:
       acr_registry: tgclzdevacr.azurecr.io
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v6
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
@@ -67,7 +67,45 @@ jobs:
     - name: Build and publish webapp to ACR
       run: |
         docker buildx build . \
-          --platform linux/amd64,linux/arm64 \
+          --platform linux/arm64 \
+          --tag $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }} \
+          --tag $acr_registry/$image_name:latest \
+          --push
+      working-directory: ${{ env.app_path }}
+  
+  build_web_app_amd_job:
+    needs: [tag_commit]
+    runs-on: ubuntu-24.04-amd64
+    name: Build Web App and deploy to ACR
+    environment: dev
+    env:
+      image_name: tgc-regnerdetnu-app
+      app_path: src/webapp
+      acr_registry: tgclzdevacr.azurecr.io
+
+    steps:
+    - uses: actions/checkout@v6
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: 'Az CLI login'
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.REGNERDETNU_DEV_CLIENT_ID }}
+        tenant-id: ${{ secrets.REGNERDETNU_DEV_TENANT_ID }}
+        subscription-id: ${{ secrets.REGNERDETNU_DEV_SUBSCRIPTION_ID }}
+
+    - name: Login to ACR
+      run: az acr login --name tgclzdevacr.azurecr.io
+
+    - name: Build and publish webapp to ACR
+      run: |
+        docker buildx build . \
+          --platform linux/amd64 \
           --tag $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }} \
           --tag $acr_registry/$image_name:latest \
           --push
@@ -84,7 +122,7 @@ jobs:
       acr_registry: tgclzdevacr.azurecr.io
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v6
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
@@ -112,13 +150,15 @@ jobs:
       working-directory: ${{ env.app_path }}
 
   build_deployment_files_dev_job:
-    needs: [build_web_app_job, build_web_api_job]
+    needs: [tag_commit, build_web_app_job, build_web_api_job]
     runs-on: ubuntu-latest
     name: Build deployment files DEV
     environment: dev
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v6
+      with:
+        fetch-depth: 0
     - name: Render manifests
       run: |
         helm template backend ./helm \
@@ -144,7 +184,7 @@ jobs:
   #   environment: prd
 
   #   steps:
-  #   - uses: actions/checkout@v3
+  #   - uses: actions/checkout@v6
 
   #   - name: 'Az CLI login'
   #     uses: azure/login@v2

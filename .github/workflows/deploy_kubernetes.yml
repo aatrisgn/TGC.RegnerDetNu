@@ -43,12 +43,12 @@ jobs:
       ARM_USE_AZUREAD: true
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           path: asgerthyregoddk
 
       - name: Checkout ArgoCD repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: aatrisgn/TGC.ArgoCD
           token: ${{ secrets.TESTING }}
@@ -135,12 +135,12 @@ jobs:
 
       - name: Set up Helm
         uses: azure/setup-helm@v3
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v6
         with:
           path: asgerthyregoddk
 
       - name: Checkout ArgoCD repo
-        uses: actions/checkout@v4
+        uses: actions/checkout@v6
         with:
           repository: aatrisgn/TGC.ArgoCD
           token: ${{ secrets.TESTING }}
