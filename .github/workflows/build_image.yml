@@ -150,7 +150,7 @@ jobs:
       working-directory: ${{ env.app_path }}
 
   build_deployment_files_dev_job:
-    needs: [tag_commit, build_web_app_job, build_web_api_job]
+    needs: [tag_commit, build_web_app_arm_job, build_web_app_amd_job, build_web_api_job]
     runs-on: ubuntu-latest
     name: Build deployment files DEV
     environment: dev
