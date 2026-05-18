@@ -1,0 +1,31 @@
+replicaCount: 1
+
+web:
+  appName: regnerdetnu-web
+  image:
+    repository: tgclzdevacr.azurecr.io/tgc-regnerdetnu-app
+    tag: latest
+    pullSecret: acr-pull
+  service:
+    port: 80
+  serviceAccount:
+    name: regnerdetnu-web-sa
+
+api:
+  appName: regnerdetnu-api
+  image:
+    repository: tgclzdevacr.azurecr.io/tgc-regnerdetnu-api
+    tag: latest
+    pullSecret: acr-pull
+  service:
+    port: 80
+  serviceAccount:
+    name: regnerdetnu-api-sa
+
+httproute:
+  gatewayName: gateway
+  gatewayNamespace: gatewayapi
+
+nodeSelector:
+  "node-role.kubernetes.io/worker": ""
+  

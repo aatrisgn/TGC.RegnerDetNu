@@ -1,19 +1,8 @@
-resource "local_file" "deployment" {
-  content  = data.local_file.deployment.content
-  filename = "${var.destination_path}/deployment.yaml"
-}
+module "deployment_files" {
+  source = "./modules/deployment_file"
+  for_each = { for val in local.deployment_files : val => val }
 
-resource "local_file" "httproute" {
-  content  = data.local_file.httproute.content
-  filename = "${var.destination_path}/httproute.yaml"
-}
-
-resource "local_file" "service" {
-  content  = data.local_file.service.content
-  filename = "${var.destination_path}/service.yaml"
-}
-
-resource "local_file" "serviceaccount" {
-  content  = data.local_file.serviceaccount.content
-  filename = "${var.destination_path}/serviceaccount.yaml"
+  source_path = "${var.source_path}"
+  destination_path = "${var.destination_path}"
+  file_name = each.value
 }

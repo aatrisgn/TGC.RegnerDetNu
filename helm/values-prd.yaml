@@ -1,0 +1,12 @@
+env: prd
+namespace: regnerdetnuprd
+
+web:
+  httproute:
+    hostname: regnerdet.nu
+    sectionName: prd-regnerdet-nu-https
+
+api:
+  httproute:
+    hostname: api.regnerdet.nu
+    sectionName: api-prd-regnerdet-nu-https

@@ -1,0 +1,14 @@
+---
+# Source: regnerdetnu/templates/service.web.yaml
+apiVersion: v1
+kind: Service
+metadata:
+  name: dev-regnerdetnu-web-svc
+  namespace: regnerdetnudev
+spec:
+  selector:
+    app: dev-regnerdetnu-web-app
+  ports:
+  - protocol: TCP
+    port: 80
+    targetPort: 80

@@ -1,0 +1,39 @@
+---
+# Source: regnerdetnu/templates/deployment.api.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: prd-regnerdetnu-api-deployment
+  namespace: regnerdetnuprd
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: prd-regnerdetnu-api-app
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: prd-regnerdetnu-api-app
+        version: v1
+    spec:
+      nodeSelector:
+        node-role.kubernetes.io/worker: ""
+      serviceAccountName: regnerdetnu-api-sa
+      imagePullSecrets:
+      - name: acr-pull
+      containers:
+      - name: regnerdetnu-api-pod
+        image: tgclzdevacr.azurecr.io/tgc-regnerdetnu-api:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: prd
+        - name: CorsAllowedOrigins
+          value: https://regnerdet.nu
+        - name: OPEN_WEATHER_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: open-weather-api-key

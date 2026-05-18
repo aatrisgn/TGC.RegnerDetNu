@@ -1,0 +1,23 @@
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: {{ .Values.env }}-{{ .Values.web.appName }}-httproute
+  namespace: {{ .Values.namespace }}
+spec:
+  parentRefs:
+    - name: {{ .Values.httproute.gatewayName }}
+      namespace: {{ .Values.httproute.gatewayNamespace }}
+      sectionName: {{ .Values.web.httproute.sectionName }}
+  hostnames:
+    - {{ .Values.web.httproute.hostname }}
+  rules:
+    - backendRefs:
+        - group: ""
+          kind: Service
+          name: {{ .Values.env }}-{{ .Values.web.appName }}-svc
+          port: {{ .Values.web.service.port }}
+          weight: 1
+      matches:
+        - path:
+            type: PathPrefix
+            value: /

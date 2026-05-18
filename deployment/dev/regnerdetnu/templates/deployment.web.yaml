@@ -1,0 +1,34 @@
+---
+# Source: regnerdetnu/templates/deployment.web.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: dev-regnerdetnu-web-deployment
+  namespace: regnerdetnudev
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: dev-regnerdetnu-web-app
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: dev-regnerdetnu-web-app
+        version: v1
+    spec:
+      nodeSelector:
+        node-role.kubernetes.io/worker: ""
+      serviceAccountName: regnerdetnu-web-sa
+      imagePullSecrets:
+      - name: acr-pull
+      containers:
+      - name: regnerdetnu-web-pod
+        image: tgclzdevacr.azurecr.io/tgc-regnerdetnu-app:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: API_URL
+          value: https://api.dev.regnerdet.nu
+        - name: ENVIRONMENT_TYPE
+          value: dev

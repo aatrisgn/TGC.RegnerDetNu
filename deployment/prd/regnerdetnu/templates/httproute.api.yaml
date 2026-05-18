@@ -1,0 +1,25 @@
+---
+# Source: regnerdetnu/templates/httproute.api.yaml
+apiVersion: gateway.networking.k8s.io/v1
+kind: HTTPRoute
+metadata:
+  name: prd-regnerdetnu-api-httproute
+  namespace: regnerdetnuprd
+spec:
+  parentRefs:
+    - name: gateway
+      namespace: gatewayapi
+      sectionName: api-prd-regnerdet-nu-https
+  hostnames:
+    - api.regnerdet.nu
+  rules:
+    - backendRefs:
+        - group: ""
+          kind: Service
+          name: prd-regnerdetnu-api-svc
+          port: 80
+          weight: 1
+      matches:
+        - path:
+            type: PathPrefix
+            value: /

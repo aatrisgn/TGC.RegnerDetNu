@@ -1,0 +1,12 @@
+env: dev
+namespace: regnerdetnudev
+
+web:
+  httproute:
+    hostname: dev.regnerdet.nu
+    sectionName: dev-regnerdet-nu-https
+
+api:
+  httproute:
+    hostname: api.dev.regnerdet.nu
+    sectionName: api-dev-regnerdet-nu-https

@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.env }}-{{ .Values.web.appName }}-deployment
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.env }}-{{ .Values.web.appName }}-app
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.env }}-{{ .Values.web.appName }}-app
+        version: v1
+    spec:
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      serviceAccountName: {{ .Values.web.serviceAccount.name }}
+      imagePullSecrets:
+      - name: {{ .Values.web.image.pullSecret }}
+      containers:
+      - name: {{ .Values.web.appName }}-pod
+        image: {{ .Values.web.image.repository }}:{{ .Values.web.image.tag }}
+        ports:
+        - containerPort: {{ .Values.web.service.port }}
+        env:
+        - name: API_URL
+          value: https://{{ .Values.api.httproute.hostname }}
+        - name: ENVIRONMENT_TYPE
+          value: {{ .Values.env }}

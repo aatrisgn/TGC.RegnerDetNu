@@ -1,0 +1,38 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ .Values.env }}-{{ .Values.api.appName }}-deployment
+  namespace: {{ .Values.namespace }}
+spec:
+  replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ .Values.env }}-{{ .Values.api.appName }}-app
+      version: v1
+  template:
+    metadata:
+      labels:
+        app: {{ .Values.env }}-{{ .Values.api.appName }}-app
+        version: v1
+    spec:
+      nodeSelector:
+        {{- toYaml .Values.nodeSelector | nindent 8 }}
+      serviceAccountName: {{ .Values.api.serviceAccount.name }}
+      imagePullSecrets:
+      - name: {{ .Values.api.image.pullSecret }}
+      containers:
+      - name: {{ .Values.api.appName }}-pod
+        image: {{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}
+        ports:
+        - containerPort: {{ .Values.api.service.port }}
+        env:
+        - name: ASPNETCORE_ENVIRONMENT
+          value: {{ .Values.env }}
+        - name: CorsAllowedOrigins
+          value: https://{{ .Values.web.httproute.hostname }}
+        - name: OPEN_WEATHER_API_KEY
+          valueFrom:
+            secretKeyRef:
+              name: api-secrets
+              key: open-weather-api-key
+        
