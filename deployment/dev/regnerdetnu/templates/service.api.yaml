@@ -5,6 +5,9 @@ kind: Service
 metadata:
   name: dev-regnerdetnu-api-svc
   namespace: regnerdetnudev
+  labels:
+    environment: dev
+    version: 1.0.8
 spec:
   selector:
     app: dev-regnerdetnu-api-app

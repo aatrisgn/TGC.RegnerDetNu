@@ -5,17 +5,20 @@ kind: Deployment
 metadata:
   name: dev-regnerdetnu-web-deployment
   namespace: regnerdetnudev
+  labels:
+    environment: dev
+    version: 1.0.8
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: dev-regnerdetnu-web-app
-      version: v1
+      version: 1.0.8
   template:
     metadata:
       labels:
         app: dev-regnerdetnu-web-app
-        version: v1
+        version: 1.0.8
     spec:
       nodeSelector:
         node-role.kubernetes.io/worker: ""
@@ -24,7 +27,7 @@ spec:
       - name: acr-pull
       containers:
       - name: regnerdetnu-web-pod
-        image: tgclzdevacr.azurecr.io/tgc-regnerdetnu-app:1.0.7
+        image: tgclzdevacr.azurecr.io/tgc-regnerdetnu-app:1.0.8
         ports:
         - containerPort: 80
         env:
