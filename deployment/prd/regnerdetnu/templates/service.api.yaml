@@ -5,6 +5,9 @@ kind: Service
 metadata:
   name: prd-regnerdetnu-api-svc
   namespace: regnerdetnuprd
+  labels:
+    environment: prd
+    version: 1.0.11
 spec:
   selector:
     app: prd-regnerdetnu-api-app
