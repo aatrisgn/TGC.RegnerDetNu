@@ -24,7 +24,7 @@ spec:
       - name: acr-pull
       containers:
       - name: regnerdetnu-api-pod
-        image: tgclzdevacr.azurecr.io/tgc-regnerdetnu-api:1.0.9
+        image: tgclzdevacr.azurecr.io/tgc-regnerdetnu-api:1.0.10
         ports:
         - containerPort: 80
         env:
