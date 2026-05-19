@@ -222,43 +222,7 @@ jobs:
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
         git add .
-        git diff --cached --quiet || git commit -m "[TGC.AsgerThyregodDK] chore: render prd manifests [${{ steps.resolve_tag.outputs.IMAGE_TAG }}]"        
+        git diff --cached --quiet || git commit -m "[TGC.RegnerDetNu] chore: render prd manifests [${{ needs.tag_commit.outputs.version }}]"        
         git push
         git tag ${{ needs.tag_commit.outputs.version }}
         git push origin ${{ needs.tag_commit.outputs.version }}
-  
-  # build_deployment_files_prd_job:
-  #   needs: [build_web_app_job, build_web_api_job]
-  #   runs-on: ubuntu-latest
-  #   name: Build deployment files PRD
-  #   environment: prd
-
-  #   steps:
-  #   - uses: actions/checkout@v6
-
-  #   - name: 'Az CLI login'
-  #     uses: azure/login@v2
-  #     with:
-  #       client-id: ${{ secrets.REGNERDETNU_DEV_CLIENT_ID }}
-  #       tenant-id: ${{ secrets.REGNERDETNU_DEV_TENANT_ID }}
-  #       subscription-id: ${{ secrets.REGNERDETNU_DEV_SUBSCRIPTION_ID }}
-  #       enable-AzPSSession: true
-
-  #   - name: Resolve image tag
-  #     id: resolve_tag
-  #     uses: azure/powershell@v3
-  #     with:
-  #       azPSVersion: latest
-  #       inlineScript: |
-  #         ./scripts/fetch_latest_image_version.ps1 `
-  #           -acrUrl "tgclzdevacr.azurecr.io" `
-  #           -imageName "tgc-regnerdetnu-app" `
-  #           -inputTag "${{ github.event.inputs.version || 'latest' }}"
-    
-  #   - name: Render manifests
-  #     run: |
-  #       helm template backend ./helm \
-  #         -f ./helm/values-dev.yaml \
-  #         --set image.tag=${{ steps.resolve_tag.outputs.IMAGE_TAG }} \
-  #         --output-dir ./deployment/dev
-  #     working-directory: asgerthyregoddk
