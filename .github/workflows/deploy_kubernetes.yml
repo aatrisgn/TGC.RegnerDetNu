@@ -1,11 +1,6 @@
 name: Generate Kubernetes manifests
 
 on:
-  push:
-    paths:
-      - 'helm/**'
-      - 'terraform/deployment/**'
-      - '.github/workflows/deploy_kubernetes.yml'
   workflow_dispatch:
     inputs:
       environment:
