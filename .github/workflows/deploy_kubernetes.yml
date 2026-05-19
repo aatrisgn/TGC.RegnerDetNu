@@ -117,17 +117,17 @@ jobs:
       - name: Az CLI login
         uses: azure/login@v3
         with:
-          client-id: ${{ secrets.REGNERDETNU_DEV_CLIENT_ID }}
-          tenant-id: ${{ secrets.REGNERDETNU_DEV_TENANT_ID }}
-          subscription-id: ${{ secrets.REGNERDETNU_DEV_SUBSCRIPTION_ID }}
+          client-id: ${{ secrets.REGNERDETNU_PRD_CLIENT_ID }}
+          tenant-id: ${{ secrets.REGNERDETNU_PRD_TENANT_ID }}
+          subscription-id: ${{ secrets.REGNERDETNU_PRD_SUBSCRIPTION_ID }}
           enable-AzPSSession: true
 
       - name: Terraform Init
         run: |
           terraform init \
-          -backend-config=resource_group_name="${{ secrets.REGNERDETNU_DEV_TFSTATE_RESOURCE_GROUP_NAME }}" \
-          -backend-config=storage_account_name="${{ secrets.REGNERDETNU_DEV_TFSTATE_STORAGE_ACCOUNT_NAME }}" \
-          -backend-config=container_name="${{ secrets.REGNERDETNU_DEV_TFSTATE_STORAGE_CONTAINER_NAME }}" \
+          -backend-config=resource_group_name="${{ secrets.REGNERDETNU_PRD_TFSTATE_RESOURCE_GROUP_NAME }}" \
+          -backend-config=storage_account_name="${{ secrets.REGNERDETNU_PRD_TFSTATE_STORAGE_ACCOUNT_NAME }}" \
+          -backend-config=container_name="${{ secrets.REGNERDETNU_PRD_TFSTATE_STORAGE_CONTAINER_NAME }}" \
           -backend-config=key="regnerdetnu.deployment.prd"
         working-directory: regnerdetnu/terraform/deployment
           
