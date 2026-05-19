@@ -14,11 +14,6 @@ on:
         description: 'Apply Terraform?'
         required: true
         type: boolean
-      version:
-        description: 'Image tag to deploy (defaults to latest tag in ACR)'
-        required: false
-        default: 'latest'
-        type: string
 
 permissions:
   id-token: write
@@ -46,7 +41,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           repository: aatrisgn/TGC.ArgoCD
-          token: ${{ secrets.TESTING }}
+          token: ${{ secrets.REGNERDETNU_CHECKOUT_TOKEN }}
           path: argocd
       
       - name: Install Terraform
@@ -116,7 +111,7 @@ jobs:
         uses: actions/checkout@v6
         with:
           repository: aatrisgn/TGC.ArgoCD
-          token: ${{ secrets.TESTING }}
+          token: ${{ secrets.REGNERDETNU_CHECKOUT_TOKEN }}
           path: argocd
 
       - name: Install Terraform
