@@ -212,11 +212,11 @@ jobs:
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
-        git tag ${{ needs.tag_commit.outputs.version }}
         git add .
-        git diff --cached --quiet || git commit -m "[TGC.AsgerThyregodDK] chore: render prd manifests [${{ steps.resolve_tag.outputs.IMAGE_TAG }}]"
-        git push origin ${{ needs.tag_commit.outputs.version }}
+        git diff --cached --quiet || git commit -m "[TGC.AsgerThyregodDK] chore: render prd manifests [${{ steps.resolve_tag.outputs.IMAGE_TAG }}]"        
         git push
+        git tag ${{ needs.tag_commit.outputs.version }}
+        git push origin ${{ needs.tag_commit.outputs.version }}
   
   # build_deployment_files_prd_job:
   #   needs: [build_web_app_job, build_web_api_job]
