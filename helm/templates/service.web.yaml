@@ -3,6 +3,9 @@ kind: Service
 metadata:
   name: {{ .Values.env }}-{{ .Values.web.appName }}-svc
   namespace: {{ .Values.namespace }}
+  labels:
+    environment: {{ .Values.env }}
+    version: {{ .Values.api.image.tag }}
 spec:
   selector:
     app: {{ .Values.env }}-{{ .Values.web.appName }}-app

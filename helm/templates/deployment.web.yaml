@@ -3,17 +3,20 @@ kind: Deployment
 metadata:
   name: {{ .Values.env }}-{{ .Values.web.appName }}-deployment
   namespace: {{ .Values.namespace }}
+  labels:
+    environment: {{ .Values.env }}
+    version: {{ .Values.api.image.tag }}
 spec:
   replicas: {{ .Values.replicaCount }}
   selector:
     matchLabels:
       app: {{ .Values.env }}-{{ .Values.web.appName }}-app
-      version: v1
+      version: {{ .Values.web.image.tag }}
   template:
     metadata:
       labels:
         app: {{ .Values.env }}-{{ .Values.web.appName }}-app
-        version: v1
+        version: {{ .Values.web.image.tag }}
     spec:
       nodeSelector:
         {{- toYaml .Values.nodeSelector | nindent 8 }}

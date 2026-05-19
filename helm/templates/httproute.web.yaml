@@ -3,6 +3,9 @@ kind: HTTPRoute
 metadata:
   name: {{ .Values.env }}-{{ .Values.web.appName }}-httproute
   namespace: {{ .Values.namespace }}
+  labels:
+    environment: {{ .Values.env }}
+    version: {{ .Values.api.image.tag }}
 spec:
   parentRefs:
     - name: {{ .Values.httproute.gatewayName }}
