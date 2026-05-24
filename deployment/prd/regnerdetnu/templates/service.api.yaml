@@ -7,11 +7,11 @@ metadata:
   namespace: regnerdetnuprd
   labels:
     environment: prd
-    version: 1.0.17
+    version: 1.0.18
 spec:
   selector:
     app: prd-regnerdetnu-api-app
   ports:
   - protocol: TCP
     port: 80
-    targetPort:
+    targetPort: 8080
