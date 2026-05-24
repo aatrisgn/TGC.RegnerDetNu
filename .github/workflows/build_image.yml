@@ -70,8 +70,7 @@ jobs:
       run: |
         docker buildx build . \
           --platform linux/arm64 \
-          --tag $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }} \
-          --tag $acr_registry/$image_name:latest \
+          --tag $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }}-arm64 \
           --push
       working-directory: ${{ env.app_path }}
   
@@ -108,8 +107,7 @@ jobs:
       run: |
         docker buildx build . \
           --platform linux/amd64 \
-          --tag $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }} \
-          --tag $acr_registry/$image_name:latest \
+          --tag $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }}-amd64 \
           --push
       working-directory: ${{ env.app_path }}
 
@@ -146,8 +144,7 @@ jobs:
       run: |
         docker buildx build . \
           --platform linux/arm64 \
-          --tag $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }} \
-          --tag $acr_registry/$image_name:latest \
+          --tag $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }}-arm64 \
           --push
       working-directory: ${{ env.app_path }}
 
@@ -184,13 +181,74 @@ jobs:
       run: |
         docker buildx build . \
           --platform linux/amd64 \
-          --tag $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }} \
-          --tag $acr_registry/$image_name:latest \
+          --tag $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }}-amd64 \
           --push
       working-directory: ${{ env.app_path }}
 
+  create_web_app_manifest_job:
+    needs: [tag_commit, build_web_app_arm_job, build_web_app_amd_job]
+    runs-on: ubuntu-latest
+    name: Create Web App multi-platform manifest
+    environment: dev
+    env:
+      image_name: tgc-regnerdetnu-app
+      acr_registry: tgclzdevacr.azurecr.io
+
+    steps:
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: 'Az CLI login'
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.REGNERDETNU_DEV_CLIENT_ID }}
+        tenant-id: ${{ secrets.REGNERDETNU_DEV_TENANT_ID }}
+        subscription-id: ${{ secrets.REGNERDETNU_DEV_SUBSCRIPTION_ID }}
+
+    - name: Login to ACR
+      run: az acr login --name tgclzdevacr.azurecr.io
+
+    - name: Create and push multi-platform manifest
+      run: |
+        docker buildx imagetools create \
+          --tag $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }} \
+          --tag $acr_registry/$image_name:latest \
+          $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }}-arm64 \
+          $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }}-amd64
+
+  create_web_api_manifest_job:
+    needs: [tag_commit, build_web_api_arm_job, build_web_api_amd_job]
+    runs-on: ubuntu-latest
+    name: Create Web API multi-platform manifest
+    environment: dev
+    env:
+      image_name: tgc-regnerdetnu-api
+      acr_registry: tgclzdevacr.azurecr.io
+
+    steps:
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: 'Az CLI login'
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.REGNERDETNU_DEV_CLIENT_ID }}
+        tenant-id: ${{ secrets.REGNERDETNU_DEV_TENANT_ID }}
+        subscription-id: ${{ secrets.REGNERDETNU_DEV_SUBSCRIPTION_ID }}
+
+    - name: Login to ACR
+      run: az acr login --name tgclzdevacr.azurecr.io
+
+    - name: Create and push multi-platform manifest
+      run: |
+        docker buildx imagetools create \
+          --tag $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }} \
+          --tag $acr_registry/$image_name:latest \
+          $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }}-arm64 \
+          $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }}-amd64
+
   build_deployment_files_dev_job:
-    needs: [tag_commit, build_web_app_arm_job, build_web_app_amd_job, build_web_api_arm_job, build_web_api_amd_job]
+    needs: [tag_commit, create_web_app_manifest_job, create_web_api_manifest_job]
     runs-on: ubuntu-latest
     name: Build deployment files DEV
     environment: dev
