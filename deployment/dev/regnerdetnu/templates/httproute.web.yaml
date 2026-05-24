@@ -7,7 +7,7 @@ metadata:
   namespace: regnerdetnudev
   labels:
     environment: dev
-    version: 1.0.15
+    version: 1.0.16
 spec:
   parentRefs:
     - name: gateway

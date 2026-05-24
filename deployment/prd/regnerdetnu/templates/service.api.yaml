@@ -7,7 +7,7 @@ metadata:
   namespace: regnerdetnuprd
   labels:
     environment: prd
-    version: 1.0.15
+    version: 1.0.16
 spec:
   selector:
     app: prd-regnerdetnu-api-app
