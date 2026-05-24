@@ -186,7 +186,7 @@ jobs:
       working-directory: ${{ env.app_path }}
 
   create_web_app_manifest_job:
-    needs: [build_web_app_arm_job, build_web_app_amd_job]
+    needs: [tag_commit, build_web_app_arm_job, build_web_app_amd_job]
     runs-on: ubuntu-latest
     name: Create Web App multi-platform manifest
     environment: dev
@@ -217,7 +217,7 @@ jobs:
           $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }}-amd64
 
   create_web_api_manifest_job:
-    needs: [build_web_api_arm_job, build_web_api_amd_job]
+    needs: [tag_commit, build_web_api_arm_job, build_web_api_amd_job]
     runs-on: ubuntu-latest
     name: Create Web API multi-platform manifest
     environment: dev
@@ -248,7 +248,7 @@ jobs:
           $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }}-amd64
 
   build_deployment_files_dev_job:
-    needs: [create_web_app_manifest_job, create_web_api_manifest_job]
+    needs: [tag_commit, create_web_app_manifest_job, create_web_api_manifest_job]
     runs-on: ubuntu-latest
     name: Build deployment files DEV
     environment: dev
