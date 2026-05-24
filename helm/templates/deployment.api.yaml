@@ -27,7 +27,7 @@ spec:
       - name: {{ .Values.api.appName }}-pod
         image: {{ .Values.api.image.repository }}:{{ .Values.api.image.tag }}
         ports:
-        - containerPort: {{ .Values.api.service.port }}
+        - containerPort: {{ .Values.api.service.targetPort }}
         env:
         - name: ASPNETCORE_ENVIRONMENT
           value: {{ .Values.env }}

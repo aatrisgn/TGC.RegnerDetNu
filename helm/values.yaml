@@ -19,6 +19,7 @@ api:
     pullSecret: acr-pull
   service:
     port: 80
+    targetPort: 8080
   serviceAccount:
     name: regnerdetnu-api-sa
 
