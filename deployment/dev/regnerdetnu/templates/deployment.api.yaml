@@ -35,5 +35,5 @@ spec:
         - name: OPEN_WEATHER_API_KEY
           valueFrom:
             secretKeyRef:
-              name: api-secrets
+              name: open-weather-api-secret
               key: open-weather-api-key
