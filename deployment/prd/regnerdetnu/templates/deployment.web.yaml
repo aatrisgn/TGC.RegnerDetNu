@@ -7,18 +7,18 @@ metadata:
   namespace: regnerdetnuprd
   labels:
     environment: prd
-    version: 1.0.17
+    version: 1.0.19.feature-testing-stuff
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: prd-regnerdetnu-web-app
-      version: 1.0.17
+      version: 1.0.19.feature-testing-stuff
   template:
     metadata:
       labels:
         app: prd-regnerdetnu-web-app
-        version: 1.0.17
+        version: 1.0.19.feature-testing-stuff
     spec:
       nodeSelector:
         node-role.kubernetes.io/worker: ""
@@ -27,7 +27,7 @@ spec:
       - name: acr-pull
       containers:
       - name: regnerdetnu-web-pod
-        image: tgclzdevacr.azurecr.io/tgc-regnerdetnu-app:1.0.17
+        image: tgclzdevacr.azurecr.io/tgc-regnerdetnu-app:1.0.19.feature-testing-stuff
         ports:
         - containerPort: 80
         env:
