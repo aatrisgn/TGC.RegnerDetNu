@@ -7,18 +7,18 @@ metadata:
   namespace: regnerdetnuprd
   labels:
     environment: prd
-    version: 1.0.14
+    version: 1.0.15
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: prd-regnerdetnu-api-app
-      version: 1.0.14
+      version: 1.0.15
   template:
     metadata:
       labels:
         app: prd-regnerdetnu-api-app
-        version: 1.0.14
+        version: 1.0.15
     spec:
       nodeSelector:
         node-role.kubernetes.io/worker: ""
@@ -27,9 +27,9 @@ spec:
       - name: acr-pull
       containers:
       - name: regnerdetnu-api-pod
-        image: tgclzdevacr.azurecr.io/tgc-regnerdetnu-api:1.0.14
+        image: tgclzdevacr.azurecr.io/tgc-regnerdetnu-api:1.0.15
         ports:
-        - containerPort: 80
+        - containerPort: 8080
         env:
         - name: ASPNETCORE_ENVIRONMENT
           value: prd
