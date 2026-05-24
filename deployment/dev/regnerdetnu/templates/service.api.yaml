@@ -7,7 +7,7 @@ metadata:
   namespace: regnerdetnudev
   labels:
     environment: dev
-    version: 1.0.16
+    version: 1.0.17
 spec:
   selector:
     app: dev-regnerdetnu-api-app
