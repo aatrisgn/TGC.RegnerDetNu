@@ -266,7 +266,7 @@ jobs:
           --output-dir ./deployment/dev
 
     - name: Render manifests PROD
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'prd')
       run: |
         helm template backend ./helm \
           -f ./helm/values-prd.yaml \
@@ -275,7 +275,7 @@ jobs:
           --output-dir ./deployment/prd
     
     - name: Commit changes and tag
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch')
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
