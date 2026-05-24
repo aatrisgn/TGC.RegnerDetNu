@@ -11,12 +11,13 @@ spec:
   selector:
     matchLabels:
       app: {{ .Values.env }}-{{ .Values.api.appName }}-app
-      version: {{ .Values.api.image.tag }}
+      environment: {{ .Values.env }}
   template:
     metadata:
       labels:
         app: {{ .Values.env }}-{{ .Values.api.appName }}-app
         version: {{ .Values.api.image.tag }}
+        environment: {{ .Values.env }}
     spec:
       nodeSelector:
         {{- toYaml .Values.nodeSelector | nindent 8 }}
