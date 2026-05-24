@@ -85,7 +85,7 @@ jobs:
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
           git add .
-          git diff --cached --quiet || git commit -m "[TGC.RegnerDetNu] chore: render dev manifests [${{ steps.resolve_tag.outputs.IMAGE_TAG }}]"
+          git diff --cached --quiet || git commit -m "[TGC.RegnerDetNu] chore: render dev manifests [${{ github.ref_name }}]"
           git push
 
   generate-prd:
@@ -152,5 +152,5 @@ jobs:
       #     git config user.email "github-actions[bot]@users.noreply.github.com"
 
       #     git add .
-      #     git diff --cached --quiet || git commit -m "[TGC.RegnerDetNu] chore: render prd manifests [${{ steps.resolve_tag.outputs.IMAGE_TAG }}]"
+      #     git diff --cached --quiet || git commit -m "[TGC.RegnerDetNu] chore: render prd manifests [${{ github.ref_name }}]"
       #     git push
