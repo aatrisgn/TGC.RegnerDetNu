@@ -3,9 +3,9 @@ replicaCount: 1
 web:
   appName: regnerdetnu-web
   image:
-    repository: tgclzdevacr.azurecr.io/tgc-regnerdetnu-app
+    repository: rg.fr-par.scw.cloud/crn-shared-prd-scr-lz-fr-par/tgc-regnerdetnu-app
     tag: latest
-    pullSecret: acr-pull
+    pullSecret: scr-pull
   service:
     port: 80
   serviceAccount:
@@ -14,9 +14,9 @@ web:
 api:
   appName: regnerdetnu-api
   image:
-    repository: tgclzdevacr.azurecr.io/tgc-regnerdetnu-api
+    repository: rg.fr-par.scw.cloud/crn-shared-prd-scr-lz-fr-par/tgc-regnerdetnu-api
     tag: latest
-    pullSecret: acr-pull
+    pullSecret: scr-pull
   service:
     port: 80
     targetPort: 8080

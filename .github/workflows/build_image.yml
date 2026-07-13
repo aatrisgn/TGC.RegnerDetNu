@@ -8,13 +8,11 @@ on:
     paths:
     - 'src/**'
     - '.github/workflows/build_image.yml'
-    - 'helm/**'
   pull_request:
     branches: ["main"]
     paths:
     - 'src/**'
     - '.github/workflows/build_image.yml'
-    - 'helm/**'
   workflow_dispatch:
 
 permissions:
@@ -36,16 +34,16 @@ jobs:
       id: version
       shell: pwsh
       run: ./.github/scripts/generate_version.ps1
-    
+
   build_web_app_arm_job:
     needs: [tag_commit]
     runs-on: ubuntu-24.04-arm
-    name: Build Web App and deploy to ACR
+    name: Build Web App ARM
     environment: dev
     env:
       image_name: tgc-regnerdetnu-app
       app_path: src/webapp
-      acr_registry: tgclzdevacr.azurecr.io
+      sccr_registry: rg.fr-par.scw.cloud/crn-shared-prd-scr-lz-fr-par
 
     steps:
     - uses: actions/checkout@v6
@@ -56,33 +54,26 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: 'Az CLI login'
-      uses: azure/login@v2
-      with:
-        client-id: ${{ secrets.REGNERDETNU_DEV_CLIENT_ID }}
-        tenant-id: ${{ secrets.REGNERDETNU_DEV_TENANT_ID }}
-        subscription-id: ${{ secrets.REGNERDETNU_DEV_SUBSCRIPTION_ID }}
+    - name: Login to SCR
+      run: docker login ${{ env.sccr_registry }} -u nologin --password-stdin <<< "${{ secrets.REGNERDETNU_PRD_DEPLOYMENT_SECRET_ACCESS_KEY }}"
 
-    - name: Login to ACR
-      run: az acr login --name tgclzdevacr.azurecr.io
-
-    - name: Build and publish webapp to ACR
+    - name: Build and publish webapp ARM to SCR
       run: |
         docker buildx build . \
           --platform linux/arm64 \
-          --tag $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }}-arm64 \
+          --tag ${{ env.sccr_registry }}/${{ env.image_name }}:${{ needs.tag_commit.outputs.version }}-arm64 \
           --push
       working-directory: ${{ env.app_path }}
-  
+
   build_web_app_amd_job:
     needs: [tag_commit]
     runs-on: ubuntu-latest
-    name: Build Web App and deploy to ACR
+    name: Build Web App AMD
     environment: dev
     env:
       image_name: tgc-regnerdetnu-app
       app_path: src/webapp
-      acr_registry: tgclzdevacr.azurecr.io
+      sccr_registry: rg.fr-par.scw.cloud/crn-shared-prd-scr-lz-fr-par
 
     steps:
     - uses: actions/checkout@v6
@@ -93,33 +84,26 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: 'Az CLI login'
-      uses: azure/login@v2
-      with:
-        client-id: ${{ secrets.REGNERDETNU_DEV_CLIENT_ID }}
-        tenant-id: ${{ secrets.REGNERDETNU_DEV_TENANT_ID }}
-        subscription-id: ${{ secrets.REGNERDETNU_DEV_SUBSCRIPTION_ID }}
+    - name: Login to SCR
+      run: docker login ${{ env.sccr_registry }} -u nologin --password-stdin <<< "${{ secrets.REGNERDETNU_PRD_DEPLOYMENT_SECRET_ACCESS_KEY }}"
 
-    - name: Login to ACR
-      run: az acr login --name tgclzdevacr.azurecr.io
-
-    - name: Build and publish webapp to ACR
+    - name: Build and publish webapp AMD to SCR
       run: |
         docker buildx build . \
           --platform linux/amd64 \
-          --tag $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }}-amd64 \
+          --tag ${{ env.sccr_registry }}/${{ env.image_name }}:${{ needs.tag_commit.outputs.version }}-amd64 \
           --push
       working-directory: ${{ env.app_path }}
 
   build_web_api_arm_job:
     needs: [tag_commit]
     runs-on: ubuntu-24.04-arm
-    name: Build Web API and deploy to ACR
+    name: Build Web API ARM
     environment: dev
     env:
       image_name: tgc-regnerdetnu-api
       app_path: src/TGC.RegnerDetNu
-      acr_registry: tgclzdevacr.azurecr.io
+      sccr_registry: rg.fr-par.scw.cloud/crn-shared-prd-scr-lz-fr-par
 
     steps:
     - uses: actions/checkout@v6
@@ -130,33 +114,26 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: 'Az CLI login'
-      uses: azure/login@v2
-      with:
-        client-id: ${{ secrets.REGNERDETNU_DEV_CLIENT_ID }}
-        tenant-id: ${{ secrets.REGNERDETNU_DEV_TENANT_ID }}
-        subscription-id: ${{ secrets.REGNERDETNU_DEV_SUBSCRIPTION_ID }}
+    - name: Login to SCR
+      run: docker login ${{ env.sccr_registry }} -u nologin --password-stdin <<< "${{ secrets.REGNERDETNU_PRD_DEPLOYMENT_SECRET_ACCESS_KEY }}"
 
-    - name: Login to ACR
-      run: az acr login --name tgclzdevacr.azurecr.io
-
-    - name: Build and publish webapi to ACR
+    - name: Build and publish API ARM to SCR
       run: |
         docker buildx build . \
           --platform linux/arm64 \
-          --tag $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }}-arm64 \
+          --tag ${{ env.sccr_registry }}/${{ env.image_name }}:${{ needs.tag_commit.outputs.version }}-arm64 \
           --push
       working-directory: ${{ env.app_path }}
 
   build_web_api_amd_job:
     needs: [tag_commit]
     runs-on: ubuntu-latest
-    name: Build Web API and deploy to ACR
+    name: Build Web API AMD
     environment: dev
     env:
       image_name: tgc-regnerdetnu-api
       app_path: src/TGC.RegnerDetNu
-      acr_registry: tgclzdevacr.azurecr.io
+      sccr_registry: rg.fr-par.scw.cloud/crn-shared-prd-scr-lz-fr-par
 
     steps:
     - uses: actions/checkout@v6
@@ -167,21 +144,14 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: 'Az CLI login'
-      uses: azure/login@v2
-      with:
-        client-id: ${{ secrets.REGNERDETNU_DEV_CLIENT_ID }}
-        tenant-id: ${{ secrets.REGNERDETNU_DEV_TENANT_ID }}
-        subscription-id: ${{ secrets.REGNERDETNU_DEV_SUBSCRIPTION_ID }}
+    - name: Login to SCR
+      run: docker login ${{ env.sccr_registry }} -u nologin --password-stdin <<< "${{ secrets.REGNERDETNU_PRD_DEPLOYMENT_SECRET_ACCESS_KEY }}"
 
-    - name: Login to ACR
-      run: az acr login --name tgclzdevacr.azurecr.io
-
-    - name: Build and publish webapi to ACR
+    - name: Build and publish API AMD to SCR
       run: |
         docker buildx build . \
           --platform linux/amd64 \
-          --tag $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }}-amd64 \
+          --tag ${{ env.sccr_registry }}/${{ env.image_name }}:${{ needs.tag_commit.outputs.version }}-amd64 \
           --push
       working-directory: ${{ env.app_path }}
 
@@ -192,29 +162,25 @@ jobs:
     environment: dev
     env:
       image_name: tgc-regnerdetnu-app
-      acr_registry: tgclzdevacr.azurecr.io
+      sccr_registry: rg.fr-par.scw.cloud/crn-shared-prd-scr-lz-fr-par
 
     steps:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: 'Az CLI login'
-      uses: azure/login@v2
-      with:
-        client-id: ${{ secrets.REGNERDETNU_DEV_CLIENT_ID }}
-        tenant-id: ${{ secrets.REGNERDETNU_DEV_TENANT_ID }}
-        subscription-id: ${{ secrets.REGNERDETNU_DEV_SUBSCRIPTION_ID }}
-
-    - name: Login to ACR
-      run: az acr login --name tgclzdevacr.azurecr.io
+    - name: Login to SCR
+      run: docker login ${{ env.sccr_registry }} -u nologin --password-stdin <<< "${{ secrets.REGNERDETNU_PRD_DEPLOYMENT_SECRET_ACCESS_KEY }}"
 
     - name: Create and push multi-platform manifest
       run: |
+        TAGS="--tag ${{ env.sccr_registry }}/${{ env.image_name }}:${{ needs.tag_commit.outputs.version }}"
+        if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+          TAGS="$TAGS --tag ${{ env.sccr_registry }}/${{ env.image_name }}:latest"
+        fi
         docker buildx imagetools create \
-          --tag $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }} \
-          --tag $acr_registry/$image_name:latest \
-          $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }}-arm64 \
-          $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }}-amd64
+          $TAGS \
+          ${{ env.sccr_registry }}/${{ env.image_name }}:${{ needs.tag_commit.outputs.version }}-arm64 \
+          ${{ env.sccr_registry }}/${{ env.image_name }}:${{ needs.tag_commit.outputs.version }}-amd64
 
   create_web_api_manifest_job:
     needs: [tag_commit, build_web_api_arm_job, build_web_api_amd_job]
@@ -223,64 +189,40 @@ jobs:
     environment: dev
     env:
       image_name: tgc-regnerdetnu-api
-      acr_registry: tgclzdevacr.azurecr.io
+      sccr_registry: rg.fr-par.scw.cloud/crn-shared-prd-scr-lz-fr-par
 
     steps:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v3
 
-    - name: 'Az CLI login'
-      uses: azure/login@v2
-      with:
-        client-id: ${{ secrets.REGNERDETNU_DEV_CLIENT_ID }}
-        tenant-id: ${{ secrets.REGNERDETNU_DEV_TENANT_ID }}
-        subscription-id: ${{ secrets.REGNERDETNU_DEV_SUBSCRIPTION_ID }}
-
-    - name: Login to ACR
-      run: az acr login --name tgclzdevacr.azurecr.io
+    - name: Login to SCR
+      run: docker login ${{ env.sccr_registry }} -u nologin --password-stdin <<< "${{ secrets.REGNERDETNU_PRD_DEPLOYMENT_SECRET_ACCESS_KEY }}"
 
     - name: Create and push multi-platform manifest
       run: |
+        TAGS="--tag ${{ env.sccr_registry }}/${{ env.image_name }}:${{ needs.tag_commit.outputs.version }}"
+        if [ "${{ github.ref }}" = "refs/heads/main" ]; then
+          TAGS="$TAGS --tag ${{ env.sccr_registry }}/${{ env.image_name }}:latest"
+        fi
         docker buildx imagetools create \
-          --tag $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }} \
-          --tag $acr_registry/$image_name:latest \
-          $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }}-arm64 \
-          $acr_registry/$image_name:${{ needs.tag_commit.outputs.version }}-amd64
+          $TAGS \
+          ${{ env.sccr_registry }}/${{ env.image_name }}:${{ needs.tag_commit.outputs.version }}-arm64 \
+          ${{ env.sccr_registry }}/${{ env.image_name }}:${{ needs.tag_commit.outputs.version }}-amd64
 
-  build_deployment_files_dev_job:
+  push_git_tag:
     needs: [tag_commit, create_web_app_manifest_job, create_web_api_manifest_job]
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main'
     runs-on: ubuntu-latest
-    name: Build deployment files DEV
-    environment: dev
+    name: Tag commit
 
     steps:
     - uses: actions/checkout@v6
       with:
         fetch-depth: 0
-    - name: Render manifests DEV
-      run: |
-        helm template backend ./helm \
-          -f ./helm/values-dev.yaml \
-          --set api.image.tag=${{ needs.tag_commit.outputs.version }} \
-          --set web.image.tag=${{ needs.tag_commit.outputs.version }} \
-          --output-dir ./deployment/dev
 
-    - name: Render manifests PROD
-      if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'prd')
-      run: |
-        helm template backend ./helm \
-          -f ./helm/values-prd.yaml \
-          --set api.image.tag=${{ needs.tag_commit.outputs.version }} \
-          --set web.image.tag=${{ needs.tag_commit.outputs.version }} \
-          --output-dir ./deployment/prd
-    
-    - name: Commit changes and tag
-      if: (github.event_name == 'push' && github.ref == 'refs/heads/main') || (github.event_name == 'workflow_dispatch')
+    - name: Tag commit
       run: |
         git config user.name "github-actions[bot]"
         git config user.email "github-actions[bot]@users.noreply.github.com"
-        git add .
-        git diff --cached --quiet || git commit -m "[TGC.RegnerDetNu] chore: render prd manifests [${{ needs.tag_commit.outputs.version }}]"        
-        git push
         git tag ${{ needs.tag_commit.outputs.version }}
         git push origin ${{ needs.tag_commit.outputs.version }}
