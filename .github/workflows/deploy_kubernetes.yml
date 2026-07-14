@@ -68,7 +68,7 @@ jobs:
         with:
           azPSVersion: latest
           inlineScript: |
-            ${{ github.action_path }}/fetch_latest_image_versions.ps1 `
+            ./.github/scripts/fetch_latest_image_versions.ps1 `
               -registryNamespace "rg.fr-par.scw.cloud/crn-shared-prd-scr-lz-fr-par" `
               -imageNames @("tgc-regnerdetnu-app", "tgc-regnerdetnu-api") `
               -inputTag "${{ inputs.software_version }}"
@@ -154,7 +154,7 @@ jobs:
         with:
           azPSVersion: latest
           inlineScript: |
-            ${{ github.action_path }}/fetch_latest_image_versions.ps1 `
+            ./.github/scripts/fetch_latest_image_versions.ps1 `
               -registryNamespace "rg.fr-par.scw.cloud/crn-shared-prd-scr-lz-fr-par" `
               -imageNames @("tgc-regnerdetnu-app", "tgc-regnerdetnu-api") `
               -inputTag "${{ github.event.inputs.software_version }}"
