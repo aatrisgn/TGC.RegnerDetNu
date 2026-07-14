@@ -64,14 +64,12 @@ jobs:
 
       - name: Resolve image tag
         id: resolve_tag
-        uses: azure/powershell@v3
-        with:
-          azPSVersion: latest
-          inlineScript: |
-            ./.github/scripts/fetch_latest_image_versions.ps1 `
-              -registryNamespace "rg.fr-par.scw.cloud/crn-shared-prd-scr-lz-fr-par" `
-              -imageNames @("tgc-regnerdetnu-app", "tgc-regnerdetnu-api") `
-              -inputTag "${{ inputs.software_version }}"
+        shell: pwsh
+        run: |
+          regnerdetnu/.github/scripts/fetch_latest_image_versions.ps1 `
+            -registryNamespace "crn-shared-prd-scr-lz-fr-par" `
+            -imageNames @("tgc-regnerdetnu-app", "tgc-regnerdetnu-api") `
+            -inputTag "${{ github.event.inputs.software_version || 'latest' }}"
 
       - name: Render manifests DEV
         run: |
@@ -150,14 +148,12 @@ jobs:
 
       - name: Resolve image tags
         id: resolve_tag
-        uses: azure/powershell@v3
-        with:
-          azPSVersion: latest
-          inlineScript: |
-            ./.github/scripts/fetch_latest_image_versions.ps1 `
-              -registryNamespace "rg.fr-par.scw.cloud/crn-shared-prd-scr-lz-fr-par" `
-              -imageNames @("tgc-regnerdetnu-app", "tgc-regnerdetnu-api") `
-              -inputTag "${{ github.event.inputs.software_version }}"
+        shell: pwsh
+        run: |
+          regnerdetnu/.github/scripts/fetch_latest_image_versions.ps1 `
+            -registryNamespace "crn-shared-prd-scr-lz-fr-par" `
+            -imageNames @("tgc-regnerdetnu-app", "tgc-regnerdetnu-api") `
+            -inputTag "${{ github.event.inputs.software_version || 'latest' }}"
 
       - name: Render manifests PRD
         run: |
