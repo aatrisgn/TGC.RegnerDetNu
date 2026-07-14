@@ -33,13 +33,11 @@ jobs:
     if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && github.event.inputs.environment == 'dev')
     runs-on: ubuntu-latest
     name: Generate DEV manifests
-    environment: dev
 
     env:
-      ARM_CLIENT_ID: "${{ secrets.REGNERDETNU_DEV_CLIENT_ID }}"
-      ARM_SUBSCRIPTION_ID: "${{ secrets.REGNERDETNU_DEV_SUBSCRIPTION_ID }}"
-      ARM_TENANT_ID: "${{ secrets.REGNERDETNU_DEV_TENANT_ID }}"
-      ARM_USE_AZUREAD: true
+      SCW_ACCESS_KEY: "${{ secrets.REGNERDETNU_PRD_DEPLOYMENT_ACCESS_KEY }}"
+      SCW_SECRET_KEY: "${{ secrets.REGNERDETNU_PRD_DEPLOYMENT_SECRET_ACCESS_KEY }}"
+      SCW_DEFAULT_ORGANIZATION_ID: "${{ secrets.REGNERDETNU_PRD_ORGANIZATION_ID }}"
 
     steps:
       - uses: actions/checkout@v4
@@ -120,10 +118,9 @@ jobs:
     environment: prd
 
     env:
-      ARM_CLIENT_ID: "${{ secrets.REGNERDETNU_PRD_CLIENT_ID }}"
-      ARM_SUBSCRIPTION_ID: "${{ secrets.REGNERDETNU_PRD_SUBSCRIPTION_ID }}"
-      ARM_TENANT_ID: "${{ secrets.REGNERDETNU_PRD_TENANT_ID }}"
-      ARM_USE_AZUREAD: true
+      SCW_ACCESS_KEY: "${{ secrets.REGNERDETNU_PRD_DEPLOYMENT_ACCESS_KEY }}"
+      SCW_SECRET_KEY: "${{ secrets.REGNERDETNU_PRD_DEPLOYMENT_SECRET_ACCESS_KEY }}"
+      SCW_DEFAULT_ORGANIZATION_ID: "${{ secrets.REGNERDETNU_PRD_ORGANIZATION_ID }}"
 
     steps:
       - uses: actions/checkout@v4
