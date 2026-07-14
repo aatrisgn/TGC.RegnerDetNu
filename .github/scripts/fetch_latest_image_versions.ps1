@@ -77,9 +77,9 @@ $namespace = Get-RegistryNamespace -Name $registryNamespace
 
 for ($i = 0; $i -lt $imageNames.Count; $i++) {
     $imageName = $imageNames[$i]
-    $outputKey = "$imageName_version"
+    $outputKey = "$($imageName)_version"
 
-    Write-Host "$imageName_version $imageName"
+    Write-Host "$outputKey $imageName"
 
     $image  = Get-RegistryImage -NamespaceId $namespace.id -ImageName $imageName
     $tags   = Get-ImageTags -ImageId $image.id
