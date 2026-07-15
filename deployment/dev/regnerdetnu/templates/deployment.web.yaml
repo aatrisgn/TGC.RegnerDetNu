@@ -13,7 +13,6 @@ spec:
   selector:
     matchLabels:
       app: dev-regnerdetnu-web-app
-      version: 1.0.18
   template:
     metadata:
       labels:
